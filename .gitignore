@@ -1,5 +1,6 @@
 ### OSX ###
 client/env/config.json
+client/env/config.js
 .DS_Store
 .AppleDouble
 .LSOverride
