@@ -1,8 +1,7 @@
 ### OSX ###
 client/env/config.json
 client/env/config.js
-config.json
-config.js
+client/env/config2.js
 
 .DS_Store
 .AppleDouble

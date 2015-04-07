@@ -1,8 +1,13 @@
 // get messages from parse server
-//
-var app = {};
-app.init = function(){
+var message = {
+  'username': 'glass',
+  'text': 'glasses',
+  'roomname': 'hr27'
+};
 
+var app = {};
+
+app.init = function(){
 };
 
 app.send = function(message){
@@ -22,16 +27,13 @@ app.send = function(message){
 
 };
 
-app.fetch = function(){
-
+app.fetch = function(message){
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
-    data: {},
+    data: JSON.stringify(message),
     contentType: 'application/json',
-    success: function (data) { // check later, is 'data' the server response?
-      console.log(data);
-    },
+    success: displayMessages,
     error: function (data) {
       console.error('chatterbox: Failed to send message');
     }
@@ -39,3 +41,15 @@ app.fetch = function(){
 
 };
 
+var displayMessages = function(data) {
+  var results = data.results;
+  var $messages = $(".messages");
+  for(var i = results.length-1; i >= 0 ; i--) {
+    var username = results[i].username;
+    var message = results[i].text;
+    if(message !== undefined && username !== undefined) {
+      var display = username + ": " + message;
+      $messages.append("<div>" + display + "</div>");
+    }
+  }
+};
