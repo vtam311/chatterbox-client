@@ -1,34 +1,57 @@
-// get messages from parse server
-var message = {
+
+var me = {
   'username': 'glass',
   'text': 'glasses',
   'roomname': 'hr27'
 };
 
 
-
 var app = {};
+app.friends = {};
 
 $(document).ready(function(){
+
+  //Create add friend functionality
+  $(document).on('click', '.username', function(){
+    var username = $(this).text();
+    app.addFriend(username);
+
+  });
+
+
+  // on submit
+  $(document).on('click', '.buttonSubmit', function(){
+    var inputText = $(".inputText").val();
+    console.log("input:" + inputText);
+    me.username = me.username;
+    me.text = inputText;
+    me.roomname = me.roomname;
+    app.addMessage();
+  });
+
+
   app.init();
 
 });
 
 
 app.init = function(){
-  setInterval(function(){
-    app.clearMessages();
-    app.fetch();
-  }, 5000);
+  app.fetch();
+
+  // setInterval(function(){
+  //   app.clearMessages();
+  //   app.fetch();
+
+  // }, 5000);
 };
 
 
-app.send = function(message){
+app.send = function(me){
 
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'POST',
-    data: JSON.stringify(message),
+    data: JSON.stringify(me),
     contentType: 'application/json',
     success: function (data) { // check later, is 'data' the server response?
       console.log('chatterbox: Message sent');
@@ -40,11 +63,11 @@ app.send = function(message){
 
 };
 
-app.fetch = function(message){
+app.fetch = function(){
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
     type: 'GET',
-    data: JSON.stringify(message),
+    data: JSON.stringify(me),
     contentType: 'application/json',
     success: displayMessages,
     error: function (data) {
@@ -61,8 +84,9 @@ var displayMessages = function(data) {
     var username = results[i].username;
     var message = results[i].text;
     if(message !== undefined && username !== undefined) {
-      var display = username + ": " + message;
-      $messages.append("<div>" + display + "</div>");
+      $messages.append(
+        '<div><span class="username">' + username + "</span>: " + message + "</div>"
+      );
     }
   }
 };
@@ -71,12 +95,19 @@ app.clearMessages = function() {
   $('#chats').html("");
 };
 
-app.addMessage = function(message) {
+app.addMessage = function() {
   var $messages = $('#chats');
-  $messages.append("<div>" + message.username +
-    ": " + message.text + "</div>");
+  $messages.append(
+    '<div><span class="username">' + me.username + "</span>: " + me.text + "</div>"
+  );
+  app.send(me);
+
 };
 
 app.addRoom = function(room) {
   $("#roomSelect").append("<div>" + room + "</div>");
+};
+
+app.addFriend = function(friend){
+  app.friends[friend] = true;
 };
