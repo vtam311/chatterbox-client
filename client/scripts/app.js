@@ -5,10 +5,23 @@ var message = {
   'roomname': 'hr27'
 };
 
+
+
 var app = {};
 
+$(document).ready(function(){
+  app.init();
+
+});
+
+
 app.init = function(){
+  setInterval(function(){
+    app.clearMessages();
+    app.fetch();
+  }, 5000);
 };
+
 
 app.send = function(message){
 
@@ -29,7 +42,7 @@ app.send = function(message){
 
 app.fetch = function(message){
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
     type: 'GET',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -43,7 +56,7 @@ app.fetch = function(message){
 
 var displayMessages = function(data) {
   var results = data.results;
-  var $messages = $(".messages");
+  var $messages = $("#chats");
   for(var i = results.length-1; i >= 0 ; i--) {
     var username = results[i].username;
     var message = results[i].text;
@@ -52,4 +65,18 @@ var displayMessages = function(data) {
       $messages.append("<div>" + display + "</div>");
     }
   }
+};
+
+app.clearMessages = function() {
+  $('#chats').html("");
+};
+
+app.addMessage = function(message) {
+  var $messages = $('#chats');
+  $messages.append("<div>" + message.username +
+    ": " + message.text + "</div>");
+};
+
+app.addRoom = function(room) {
+  $("#roomSelect").append("<div>" + room + "</div>");
 };
